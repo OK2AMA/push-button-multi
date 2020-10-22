@@ -14,7 +14,7 @@
 #define swit_cold 3
 #define swit_warm 16
 
-#define pwr_pin 1
+#define pwr_pin 2
 #define beep_pin 15
 
 
@@ -72,7 +72,7 @@ void setup() {
   }
   else
   {
-      String mqtt_msg = "btn2_error_no_button_pressed";
+    String mqtt_msg = "btn2_error_no_button_pressed";
   }
 
   digitalWrite(beep_pin, HIGH);
@@ -98,6 +98,7 @@ void setup() {
 
 void loop() {
   digitalWrite(pwr_pin, LOW);
+  delay(300000000);
   ESP.deepSleep(0);
 }
 
@@ -150,10 +151,9 @@ void mqttConnection(String mqtt_msg) {
       delay(500);
     }
   }
-  int str_len = mqtt_msg.length() + 1; 
-  char char_array[str_len];
-  mqtt_msg.toCharArray(char_array, str_len);
-  client.publish("switch / btn", mqtt_msg );
+  char charBuf[mqtt_msg.length() + 1];
+  mqtt_msg.toCharArray(charBuf, mqtt_msg.length() + 1);
+  client.publish("switch / btn", charBuf );
 
   // Serial.println("Closing the MQTT connection");
   client.disconnect();
