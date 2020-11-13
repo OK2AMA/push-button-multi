@@ -6,13 +6,10 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
-#define btn_a 5
+#define btn_a 12
 #define btn_b 4
-#define btn_c 13
-#define btn_d 14
-#define btn_e 12
-#define swit_cold 3
-#define swit_warm 16
+#define btn_c 5
+#define btn_d 13
 
 #define pwr_pin 2
 #define beep_pin 15
@@ -22,7 +19,7 @@ const char* deviceName = "esp-push-button-multi";
 
 // Replace with your SSID and Password
 const char* ssid     = "ketchup";
-const char* password = "***";
+const char* password = "**";
 
 const char* mqtt_server = "192.168.1.1";
 
@@ -39,44 +36,35 @@ void setup() {
   pinMode(btn_b, INPUT);
   pinMode(btn_c, INPUT);
   pinMode(btn_d, INPUT);
-  pinMode(swit_cold, INPUT);
-  pinMode(swit_warm, INPUT);
+
 
   digitalWrite(pwr_pin, HIGH);   // turn the LED on (HIGH is the voltage level)
   digitalWrite(beep_pin, LOW);
 
-  String mqtt_msg = "abcd";
+  String mqtt_msg = "abd";
 
-  if ( digitalRead(btn_a) == LOW ) {
-    String mqtt_msg = "btn2a";
+  if ( digitalRead(btn_a) == HIGH ) {
+    mqtt_msg = "btn2a";
+    digitalWrite(beep_pin, HIGH);
+    delay(30);
+    digitalWrite(beep_pin, LOW);
   }
-  else if ( digitalRead(btn_b) == LOW ) {
-    String mqtt_msg = "btn2b";
+  else if ( digitalRead(btn_b) == HIGH ) {
+    mqtt_msg = "btn2b";
   }
-  else if ( digitalRead(btn_c) == LOW ) {
-    String mqtt_msg = "btn2c";
+  else if ( digitalRead(btn_c) == HIGH ) {
+    mqtt_msg = "btn2c";
   }
-  else if ( digitalRead(btn_d) == LOW ) {
-    String mqtt_msg = "btn2d";
-  }
-  else if ( digitalRead(btn_e) == LOW ) {
-    if ( digitalRead(swit_cold) == LOW ) {
-      String mqtt_msg = "btn2dc";
-    }
-    else if ( digitalRead(swit_warm) == LOW ) {
-      String mqtt_msg = "btn2dw";
-    }
-    else {
-      String mqtt_msg = "btn2dn";
-    }
+  else if ( digitalRead(btn_d) == HIGH ) {
+    mqtt_msg = "btn2d";
   }
   else
   {
-    String mqtt_msg = "btn2_error_no_button_pressed";
+    mqtt_msg = "btn2_error_no_button_pressed";
   }
 
   digitalWrite(beep_pin, HIGH);
-  delay(60);
+  delay(30);
   digitalWrite(beep_pin, LOW);
 
 
@@ -98,7 +86,7 @@ void setup() {
 
 void loop() {
   digitalWrite(pwr_pin, LOW);
-  delay(300000000);
+  // delay(30000);
   ESP.deepSleep(0);
 }
 
@@ -153,7 +141,7 @@ void mqttConnection(String mqtt_msg) {
   }
   char charBuf[mqtt_msg.length() + 1];
   mqtt_msg.toCharArray(charBuf, mqtt_msg.length() + 1);
-  client.publish("switch / btn", charBuf );
+  client.publish("switch/btn", charBuf );
 
   // Serial.println("Closing the MQTT connection");
   client.disconnect();
